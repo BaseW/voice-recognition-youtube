@@ -24,5 +24,6 @@ fn main() {
         println!("{:#?}", vosk_recognizer.partial_result());
     }
 
-    println!("{:#?}", vosk_recognizer.final_result().multiple().unwrap());
+    // エラーになるのでコメントアウト
+    // println!("{:#?}", vosk_recognizer.final_result().multiple().unwrap());
 }
