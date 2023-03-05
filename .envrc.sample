@@ -1,1 +1,1 @@
-export VOSK_MODEL_PATH=
+export VOSK_MODEL_PATH=vosk-model-small-ja-0.22
