@@ -1,6 +1,6 @@
 use hound::WavReader;
 use std::env;
-use vosk::{Model, Recognizer};
+use voice_recognition_vosk::VoskRecognizer;
 
 fn main() {
     // read path to WAV file from arguments
@@ -8,7 +8,6 @@ fn main() {
 
     // read path to vosk model from environment variable
     let vosk_model_path = env::var("VOSK_MODEL_PATH").expect("VOSK_MODEL_PATH not set");
-    let model = Model::new(vosk_model_path).expect("Could not create the model");
 
     let mut reader = WavReader::open(wav_path).expect("Could not create the WAV reader");
     let samples = reader
@@ -16,8 +15,7 @@ fn main() {
         .collect::<hound::Result<Vec<i16>>>()
         .expect("Could not read WAV file");
 
-    let mut vosk_recognizer = Recognizer::new(&model, reader.spec().sample_rate as f32)
-        .expect("Could not create the recognizer");
+    let mut vosk_recognizer = VoskRecognizer::new(vosk_model_path, reader.spec().sample_rate);
 
     for sample in samples.chunks(100) {
         vosk_recognizer.accept_waveform(sample);
