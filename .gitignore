@@ -1,0 +1,8 @@
+# Rust
+**/*/target/
+
+# VOSK
+vosk-model*
+
+# env
+.envrc
