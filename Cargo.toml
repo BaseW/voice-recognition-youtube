@@ -1,5 +1,6 @@
 [workspace]
 
 members = [
-    "voice-recognition-vosk"
+    "voice-recognition-vosk",
+    "youtube-downloader"
 ]
