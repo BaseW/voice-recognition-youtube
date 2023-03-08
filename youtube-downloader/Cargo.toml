@@ -1,12 +1,10 @@
 [package]
-name = "voice-recognition-vosk"
+name = "youtube-downloader"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-vosk = "0.2.0"
-
-[dev-dependencies]
-hound = "3.5.0"
+tokio = { version = "1.26.0", features = ["full"] }
+youtube_dl = { version = "0.8.0", features = ["downloader"] }

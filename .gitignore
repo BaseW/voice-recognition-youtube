@@ -1,8 +1,11 @@
 # Rust
-**/*/target/
+/target/
 
 # VOSK
 vosk-model*
 
 # env
 .envrc
+
+# tmp
+tmp/
