@@ -6,3 +6,6 @@ vosk-model*
 
 # env
 .envrc
+
+# tmp
+tmp/
