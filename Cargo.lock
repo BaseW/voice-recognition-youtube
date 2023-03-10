@@ -547,6 +547,10 @@ dependencies = [
 [[package]]
 name = "recognition-from-link"
 version = "0.1.0"
+dependencies = [
+ "tokio",
+ "youtube-downloader",
+]
 
 [[package]]
 name = "redox_syscall"
