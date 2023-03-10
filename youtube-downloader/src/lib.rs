@@ -5,6 +5,7 @@ pub async fn download_movie(url: &str) -> Result<SingleVideo, Error> {
         .download(true)
         .socket_timeout("15")
         .output_directory("tmp")
+        .output_template("video")
         .run_async()
         .await
         .expect("Failed to get video information");
