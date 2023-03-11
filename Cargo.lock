@@ -548,7 +548,9 @@ dependencies = [
 name = "recognition-from-link"
 version = "0.1.0"
 dependencies = [
+ "hound",
  "tokio",
+ "voice-recognition-vosk",
  "youtube-downloader",
 ]
 
