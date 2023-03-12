@@ -4,7 +4,7 @@ use youtube_downloader::download_movie;
 #[tokio::main]
 async fn main() {
     println!("downloading video...");
-    let url = "https://www.youtube.com/watch?v=VFbhKZFzbzk";
+    let url = "https://www.youtube.com/watch?v=DZcNcQfEgnY";
     // download
     let video = download_movie(url).await.unwrap();
     println!("Video title: {}", video.title);
@@ -14,6 +14,7 @@ async fn main() {
     // convert to wav from webm
     let mut command = std::process::Command::new("ffmpeg");
     command
+        .arg("-y")
         .arg("-i")
         .arg("tmp/video.webm")
         .arg("-vn")
@@ -27,8 +28,9 @@ async fn main() {
     // print command
     // println!("command: {:?}", command);
     // execute command
-    let output = command.spawn().expect("Failed to execute ffmpeg");
-    // println!("output: {:?}", output);
+    // check status until done
+    let status = command.status().expect("Failed to execute ffmpeg");
+    println!("status: {}", status);
 
     println!("recognizing...");
     // read path to vosk model from environment variable
