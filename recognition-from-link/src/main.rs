@@ -53,23 +53,32 @@ fn recognize_splitted_files(sample_rate: u32) {
     let mut prev_recognition_result = "".to_string();
     // recognize each files
     // tmp/output001.wav, tmp/output002.wav, ...
-    for i in 1..=10 {
-        let wav_path = format!("tmp/output{:03}.wav", i);
+    let mut count = 0;
+    loop {
+        let wav_path = format!("tmp/output{:03}.wav", count);
         println!("recognizing {}...", wav_path);
-        let mut reader = WavReader::open(wav_path).expect("Could not create the WAV reader");
-        let samples = reader
-            .samples()
-            .collect::<hound::Result<Vec<i16>>>()
-            .expect("Could not read WAV file");
-        for sample in samples.chunks(100) {
-            vosk_recognizer.accept_waveform(sample);
-            let current_result = vosk_recognizer.partial_result();
-            // if recognition result is different from previous result
-            if prev_recognition_result != current_result {
-                println!("{:#?}", current_result);
-                prev_recognition_result = current_result;
+        match WavReader::open(wav_path) {
+            Ok(mut reader) => {
+                let samples = reader
+                    .samples()
+                    .collect::<hound::Result<Vec<i16>>>()
+                    .expect("Could not read WAV file");
+                for sample in samples.chunks(100) {
+                    vosk_recognizer.accept_waveform(sample);
+                    let current_result = vosk_recognizer.partial_result();
+                    // if recognition result is different from previous result
+                    if prev_recognition_result != current_result {
+                        println!("{:#?}", current_result);
+                        prev_recognition_result = current_result;
+                    }
+                }
+            }
+            Err(err) => {
+                println!("err: {:?}", err);
+                break;
             }
         }
+        count = count + 1;
     }
 }
 
