@@ -58,6 +58,7 @@ async fn main() {
     let mut vosk_recognizer =
         voice_recognition_vosk::VoskRecognizer::new(vosk_model_path, sample_rate);
 
+    let mut prev_recognition_result = "".to_string();
     // recognize each files
     // tmp/output001.wav, tmp/output002.wav, ...
     for i in 1..=10 {
@@ -70,7 +71,12 @@ async fn main() {
             .expect("Could not read WAV file");
         for sample in samples.chunks(100) {
             vosk_recognizer.accept_waveform(sample);
-            println!("{:#?}", vosk_recognizer.partial_result());
+            let current_result = vosk_recognizer.partial_result();
+            // if recognition result is different from previous result
+            if prev_recognition_result != current_result {
+                println!("{:#?}", current_result);
+                prev_recognition_result = current_result;
+            }
         }
     }
 }
