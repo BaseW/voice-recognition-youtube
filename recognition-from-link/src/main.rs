@@ -58,7 +58,6 @@ fn recognize_splitted_files(sample_rate: u32) {
     let chunk_size = 100;
     loop {
         let wav_path = format!("tmp/output{:03}.wav", file_count);
-        println!("recognizing {}...", wav_path);
         match WavReader::open(wav_path) {
             Ok(mut reader) => {
                 let samples = reader
@@ -105,5 +104,6 @@ async fn main() {
     split_file_by_ffmpeg(output_file_path, "tmp/output%03d.wav");
 
     // recognize splitted wav files
+    println!("recognizing {}...", output_file_path);
     recognize_splitted_files(sample_rate);
 }
