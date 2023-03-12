@@ -21,7 +21,7 @@ async fn main() {
         .arg("-ar")
         .arg("44100")
         .arg("-ac")
-        .arg("2")
+        .arg("1")
         .arg("-b:a")
         .arg("192k")
         .arg(wav_path);
