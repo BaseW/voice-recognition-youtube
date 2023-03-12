@@ -2,5 +2,6 @@
 
 members = [
     "voice-recognition-vosk",
-    "youtube-downloader"
+    "youtube-downloader",
+    "recognition-from-link",
 ]

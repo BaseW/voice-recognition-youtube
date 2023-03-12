@@ -11,3 +11,6 @@ libvosk.dylib
 
 # tmp
 tmp/
+
+# Mac
+.DS_Store
