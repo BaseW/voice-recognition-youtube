@@ -9,3 +9,6 @@ vosk-model*
 
 # tmp
 tmp/
+
+# Mac
+.DS_Store
