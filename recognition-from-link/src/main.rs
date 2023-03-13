@@ -89,21 +89,21 @@ fn recognize_splitted_files(sample_rate: u32) {
 async fn main() {
     println!("downloading video...");
     let url = "https://www.youtube.com/watch?v=DZcNcQfEgnY";
+    let download_file_path = "tmp/video.webm";
     // download
-    let video = download_movie(url).await.unwrap();
+    let video = download_movie(url, download_file_path).await.unwrap();
     println!("Video title: {}", video.title);
 
     println!("converting to wav...");
-    let input_file_path = "tmp/video.webm";
-    let output_file_path = "tmp/output.wav";
+    let converted_file_path = "tmp/output.wav";
     let sample_rate = 44100;
     // convert to wav from webm
-    convert_file_by_ffmpeg(input_file_path, output_file_path, sample_rate);
+    convert_file_by_ffmpeg(download_file_path, converted_file_path, sample_rate);
 
     // split wav file into 10 seconds
-    split_file_by_ffmpeg(output_file_path, "tmp/output%03d.wav");
+    split_file_by_ffmpeg(converted_file_path, "tmp/output%03d.wav");
 
     // recognize splitted wav files
-    println!("recognizing {}...", output_file_path);
+    println!("recognizing {}...", converted_file_path);
     recognize_splitted_files(sample_rate);
 }

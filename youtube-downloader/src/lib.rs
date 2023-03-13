@@ -1,11 +1,11 @@
 use youtube_dl::{Error, SingleVideo, YoutubeDl};
 
-pub async fn download_movie(url: &str) -> Result<SingleVideo, Error> {
+pub async fn download_movie(url: &str, output_file_name: &str) -> Result<SingleVideo, Error> {
     let output = YoutubeDl::new(url)
         .download(true)
         .socket_timeout("15")
         .output_directory("tmp")
-        .output_template("video")
+        .output_template(output_file_name)
         .run_async()
         .await
         .expect("Failed to get video information");
