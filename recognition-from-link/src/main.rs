@@ -87,21 +87,34 @@ fn recognize_splitted_files(sample_rate: u32) {
 
 #[tokio::main]
 async fn main() {
-    println!("downloading video...");
     let url = "https://www.youtube.com/watch?v=DZcNcQfEgnY";
     let download_file_path = "tmp/video.webm";
-    // download
-    let video = download_movie(url, download_file_path).await.unwrap();
-    println!("Video title: {}", video.title);
+    // check if download file exists
+    if !std::path::Path::new(download_file_path).exists() {
+        // download video
+        println!("downloading video...");
+        let video = download_movie(url, download_file_path).await.unwrap();
+        println!("Video title: {}", video.title);
+    }
 
-    println!("converting to wav...");
     let converted_file_path = "tmp/output.wav";
     let sample_rate = 44100;
-    // convert to wav from webm
-    convert_file_by_ffmpeg(download_file_path, converted_file_path, sample_rate);
+    // check if converted file exists
+    if !std::path::Path::new("tmp/output.wav").exists() {
+        // convert to wav from webm
+        println!(
+            "converting {} to {}...",
+            download_file_path, converted_file_path
+        );
+        convert_file_by_ffmpeg(download_file_path, converted_file_path, sample_rate);
+    }
 
-    // split wav file into 10 seconds
-    split_file_by_ffmpeg(converted_file_path, "tmp/output%03d.wav");
+    // check if split files exists
+    if !std::path::Path::new("tmp/output001.wav").exists() {
+        // split wav file into 10 seconds
+        println!("splitting {}...", converted_file_path);
+        split_file_by_ffmpeg(converted_file_path, "tmp/output%03d.wav");
+    }
 
     // recognize splitted wav files
     println!("recognizing {}...", converted_file_path);
