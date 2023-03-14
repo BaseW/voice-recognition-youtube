@@ -1,4 +1,4 @@
-use youtube_dl::{Error, SingleVideo, YoutubeDl};
+use youtube_dl::{Error, SearchOptions, SingleVideo, YoutubeDl};
 
 pub async fn download_movie(
     url: &str,
@@ -16,6 +16,27 @@ pub async fn download_movie(
         Err(err) => {
             println!("err: {:?}", err);
             Err(err)
+        }
+    }
+}
+
+pub async fn search_videos(search_query: String, count: usize) -> Vec<SingleVideo> {
+    let search_options = SearchOptions::youtube(search_query).with_count(count);
+    let youtube_dl = YoutubeDl::search_for(&search_options);
+    match youtube_dl.run() {
+        Ok(output) => match output.into_playlist() {
+            Some(playlist) => {
+                if let Some(entries) = playlist.entries {
+                    entries
+                } else {
+                    Vec::new()
+                }
+            }
+            None => Vec::new(),
+        },
+        Err(err) => {
+            println!("err: {:?}", err);
+            Vec::new()
         }
     }
 }
