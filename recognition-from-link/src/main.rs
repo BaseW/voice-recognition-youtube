@@ -106,7 +106,11 @@ async fn main() {
         // download video
         println!("downloading video...");
         let video = download_movie(url, download_file_path).await.unwrap();
-        println!("Video title: {}", video.title);
+        // if video is None, exit
+        if video.is_none() {
+            println!("failed to download video");
+            std::process::exit(1);
+        }
     }
 
     let converted_file_path = "tmp/output.wav";
