@@ -17,7 +17,17 @@ fn main() {
                         for entry in entries {
                             // print each video title and uploader if uploader exists
                             if let Some(uploader) = entry.uploader {
-                                println!("video title: {}, uploader: {}", entry.title, uploader);
+                                if let Some(upload_date) = entry.upload_date {
+                                    println!(
+                                        "video title: {}, uploader: {}, upload date: {}",
+                                        entry.title, uploader, upload_date
+                                    );
+                                } else {
+                                    println!(
+                                        "video title: {}, uploader: {}",
+                                        entry.title, uploader
+                                    );
+                                }
                             } else {
                                 println!("video title: {}", entry.title);
                             }
