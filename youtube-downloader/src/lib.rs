@@ -40,3 +40,21 @@ pub async fn search_videos(search_query: String, count: usize) -> Vec<SingleVide
         }
     }
 }
+
+pub async fn download_movie_by_id(id: &str, output_file_name: &str) -> Option<SingleVideo> {
+    let url = format!("https://www.youtube.com/watch?v={}", id);
+    match YoutubeDl::new(url)
+        .download(true)
+        .socket_timeout("15")
+        .output_directory(".")
+        .output_template(output_file_name)
+        .run_async()
+        .await
+    {
+        Ok(output) => output.into_single_video(),
+        Err(err) => {
+            println!("err: {:?}", err);
+            None
+        }
+    }
+}
