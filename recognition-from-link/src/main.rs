@@ -1,10 +1,17 @@
 use recognition_from_link::{
     convert_file_by_ffmpeg, recognize_splitted_files, split_file_by_ffmpeg,
 };
-use youtube_downloader::download_movie;
+use youtube_downloader::{download_movie, search_videos};
 
 #[tokio::main]
 async fn main() {
+    // TODO: search videos by query that was provided from args
+    // let search_query = std::env::args().nth(1).expect("search query not provided");
+    // let count = std::env::args().nth(2).expect("count not provided");
+    // let count = count.parse::<usize>().unwrap();
+    // let videos = search_videos(search_query, count).await;
+    // TODO: print videos with index
+    // TODO: print prompt to select target video index
     let url = "https://www.youtube.com/watch?v=DZcNcQfEgnY";
     let download_file_path = "tmp/video.webm";
     // check if download file exists
