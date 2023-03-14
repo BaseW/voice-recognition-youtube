@@ -1,7 +1,7 @@
 use hound::WavReader;
 use youtube_downloader::download_movie;
 
-fn convert_file_by_ffmpeg(input_file_path: &str, output_file_path: &str, sample_rate: u32) {
+fn convert_file_by_ffmpeg(input_file_path: &str, output_file_path: &str, sample_rate: u32) -> i32 {
     let mut command = std::process::Command::new("ffmpeg");
     command
         .arg("-y")
@@ -17,13 +17,19 @@ fn convert_file_by_ffmpeg(input_file_path: &str, output_file_path: &str, sample_
         .arg(output_file_path);
     // print command
     // println!("command: {:?}", command);
-    // execute command
-    // check status until done
-    let status = command.status().expect("Failed to execute ffmpeg");
-    println!("convert command exit status: {}", status);
+    match command.status() {
+        Ok(status) => {
+            println!("convert command exit status: {}", status);
+            status.code().unwrap()
+        }
+        Err(err) => {
+            println!("err: {:?}", err);
+            1
+        }
+    }
 }
 
-fn split_file_by_ffmpeg(input_file_path: &str, output_file_path: &str) {
+fn split_file_by_ffmpeg(input_file_path: &str, output_file_path: &str) -> i32 {
     let mut command = std::process::Command::new("ffmpeg");
     command
         .arg("-y")
@@ -38,10 +44,16 @@ fn split_file_by_ffmpeg(input_file_path: &str, output_file_path: &str) {
         .arg(output_file_path);
     // print command
     // println!("command: {:?}", command);
-    // execute command
-    // check status until done
-    let status = command.status().expect("Failed to execute ffmpeg");
-    println!("split command exit status: {}", status);
+    match command.status() {
+        Ok(status) => {
+            println!("split command exit status: {}", status);
+            status.code().unwrap()
+        }
+        Err(err) => {
+            println!("err: {:?}", err);
+            1
+        }
+    }
 }
 
 fn recognize_splitted_files(sample_rate: u32) {
@@ -106,14 +118,26 @@ async fn main() {
             "converting {} to {}...",
             download_file_path, converted_file_path
         );
-        convert_file_by_ffmpeg(download_file_path, converted_file_path, sample_rate);
+        match convert_file_by_ffmpeg(download_file_path, converted_file_path, sample_rate) {
+            0 => println!("converted successfully"),
+            _ => {
+                println!("failed to convert");
+                std::process::exit(1);
+            }
+        }
     }
 
     // check if split files exists
     if !std::path::Path::new("tmp/output001.wav").exists() {
         // split wav file into 10 seconds
         println!("splitting {}...", converted_file_path);
-        split_file_by_ffmpeg(converted_file_path, "tmp/output%03d.wav");
+        match split_file_by_ffmpeg(converted_file_path, "tmp/output%03d.wav") {
+            0 => println!("splitted successfully"),
+            _ => {
+                println!("failed to split");
+                std::process::exit(1);
+            }
+        }
     }
 
     // recognize splitted wav files
