@@ -1,28 +1,8 @@
 use recognition_from_link::{
-    convert_file_by_ffmpeg, recognize_splitted_files, split_file_by_ffmpeg,
+    convert_file_by_ffmpeg, recognize_splitted_files, select_target_video_from_search_result,
+    split_file_by_ffmpeg,
 };
-use youtube_downloader::{download_movie, search_videos};
-
-async fn select_target_video_from_search_result(search_query: String, count: usize) -> String {
-    println!("searching videos...");
-    let videos = search_videos(search_query, count).await;
-    // print videos with index
-    for (i, video) in videos.iter().enumerate() {
-        println!("{}: {}", i, video.title);
-    }
-    // print prompt to select target video index
-    println!("select target video index: ");
-    // get target video index from stdin
-    let mut target_video_index = String::new();
-    std::io::stdin().read_line(&mut target_video_index).unwrap();
-    let target_video_index = target_video_index.trim().parse::<usize>().unwrap();
-    // check index is valid
-    if target_video_index >= videos.len() {
-        println!("invalid index");
-        std::process::exit(1);
-    }
-    (&videos)[target_video_index].id.as_str().to_string()
-}
+use youtube_downloader::download_movie;
 
 #[tokio::main]
 async fn main() {

@@ -1,4 +1,5 @@
 use hound::WavReader;
+use youtube_downloader::search_videos;
 
 pub fn convert_file_by_ffmpeg(
     input_file_path: &str,
@@ -98,4 +99,25 @@ pub fn recognize_splitted_files(sample_rate: u32) {
         }
         file_count = file_count + 1;
     }
+}
+
+pub async fn select_target_video_from_search_result(search_query: String, count: usize) -> String {
+    println!("searching videos...");
+    let videos = search_videos(search_query, count).await;
+    // print videos with index
+    for (i, video) in videos.iter().enumerate() {
+        println!("{}: {}", i, video.title);
+    }
+    // print prompt to select target video index
+    println!("select target video index: ");
+    // get target video index from stdin
+    let mut target_video_index = String::new();
+    std::io::stdin().read_line(&mut target_video_index).unwrap();
+    let target_video_index = target_video_index.trim().parse::<usize>().unwrap();
+    // check index is valid
+    if target_video_index >= videos.len() {
+        println!("invalid index");
+        std::process::exit(1);
+    }
+    (&videos)[target_video_index].id.as_str().to_string()
 }
