@@ -3,22 +3,44 @@ use recognition_from_link::{
 };
 use youtube_downloader::{download_movie, search_videos};
 
+async fn select_target_video_from_search_result(search_query: String, count: usize) -> String {
+    println!("searching videos...");
+    let videos = search_videos(search_query, count).await;
+    // print videos with index
+    for (i, video) in videos.iter().enumerate() {
+        println!("{}: {}", i, video.title);
+    }
+    // print prompt to select target video index
+    println!("select target video index: ");
+    // get target video index from stdin
+    let mut target_video_index = String::new();
+    std::io::stdin().read_line(&mut target_video_index).unwrap();
+    let target_video_index = target_video_index.trim().parse::<usize>().unwrap();
+    // check index is valid
+    if target_video_index >= videos.len() {
+        println!("invalid index");
+        std::process::exit(1);
+    }
+    (&videos)[target_video_index].id.as_str().to_string()
+}
+
 #[tokio::main]
 async fn main() {
-    // TODO: search videos by query that was provided from args
-    // let search_query = std::env::args().nth(1).expect("search query not provided");
-    // let count = std::env::args().nth(2).expect("count not provided");
-    // let count = count.parse::<usize>().unwrap();
-    // let videos = search_videos(search_query, count).await;
-    // TODO: print videos with index
-    // TODO: print prompt to select target video index
-    let url = "https://www.youtube.com/watch?v=DZcNcQfEgnY";
+    // search videos by query that was provided from args
+    let search_query = std::env::args().nth(1).expect("search query not provided");
+    let count = std::env::args().nth(2).expect("count not provided");
+    let count = count.parse::<usize>().unwrap();
+
+    // select target video from search result
+    let target_video_id = select_target_video_from_search_result(search_query, count).await;
+
+    let url = format!("https://www.youtube.com/watch?v={}", target_video_id);
     let download_file_path = "tmp/video.webm";
     // check if download file exists
     if !std::path::Path::new(download_file_path).exists() {
         // download video
         println!("downloading video...");
-        let video = download_movie(url, download_file_path).await.unwrap();
+        let video = download_movie(&url, download_file_path).await.unwrap();
         // if video is None, exit
         if video.is_none() {
             println!("failed to download video");
