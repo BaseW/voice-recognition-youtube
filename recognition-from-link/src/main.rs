@@ -1,17 +1,26 @@
 use recognition_from_link::{
-    convert_file_by_ffmpeg, recognize_splitted_files, split_file_by_ffmpeg,
+    convert_file_by_ffmpeg, recognize_splitted_files, select_target_video_from_search_result,
+    split_file_by_ffmpeg,
 };
 use youtube_downloader::download_movie;
 
 #[tokio::main]
 async fn main() {
-    let url = "https://www.youtube.com/watch?v=DZcNcQfEgnY";
+    // search videos by query that was provided from args
+    let search_query = std::env::args().nth(1).expect("search query not provided");
+    let count = std::env::args().nth(2).expect("count not provided");
+    let count = count.parse::<usize>().unwrap();
+
+    // select target video from search result
+    let target_video_id = select_target_video_from_search_result(search_query, count).await;
+
+    let url = format!("https://www.youtube.com/watch?v={}", target_video_id);
     let download_file_path = "tmp/video.webm";
     // check if download file exists
     if !std::path::Path::new(download_file_path).exists() {
         // download video
         println!("downloading video...");
-        let video = download_movie(url, download_file_path).await.unwrap();
+        let video = download_movie(&url, download_file_path).await.unwrap();
         // if video is None, exit
         if video.is_none() {
             println!("failed to download video");
