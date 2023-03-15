@@ -85,6 +85,15 @@ pub fn recognize_splitted_files(sample_rate: u32) {
                     let elapsed_time = ((chunk_size * chunk_count) as f32) / (sample_rate as f32);
                     vosk_recognizer.accept_waveform(sample);
                     let current_result = vosk_recognizer.partial_result();
+                    // get last 30 characters
+                    let current_result = current_result
+                        .chars()
+                        .rev()
+                        .take(30)
+                        .collect::<String>()
+                        .chars()
+                        .rev()
+                        .collect::<String>();
                     // if recognition result is different from previous result
                     if prev_recognition_result != current_result {
                         println!("{} s: {:#?}", elapsed_time, current_result);
