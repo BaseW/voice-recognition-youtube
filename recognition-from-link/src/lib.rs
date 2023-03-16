@@ -60,11 +60,16 @@ pub fn split_file_by_ffmpeg(input_file_path: &str, output_file_path: &str) -> i3
     }
 }
 
-pub fn recognize_splitted_files(sample_rate: u32) {
+pub fn recognize_splitted_files(target_video_id: &str, sample_rate: u32) {
     // read path to vosk model from environment variable
     let vosk_model_path = std::env::var("VOSK_MODEL_PATH").expect("VOSK_MODEL_PATH not set");
     let mut vosk_recognizer =
         voice_recognition_vosk::VoskRecognizer::new(vosk_model_path, sample_rate);
+    let mut csv_writer = csv::Writer::from_path(format!("tmp/{}.csv", target_video_id)).unwrap();
+    // write header: elapsed_time, recognition_result
+    csv_writer
+        .write_record(&["elapsed_time", "recognition_result"])
+        .expect("Could not write header");
 
     let mut prev_recognition_result = "".to_string();
     // recognize each files
@@ -73,7 +78,8 @@ pub fn recognize_splitted_files(sample_rate: u32) {
     let mut chunk_count = 0;
     let chunk_size = 100;
     loop {
-        let wav_path = format!("tmp/output{:03}.wav", file_count);
+        let wav_path = format!("tmp/{}{:03}.wav", target_video_id, file_count);
+        println!("wav_path: {}", wav_path);
         match WavReader::open(wav_path) {
             Ok(mut reader) => {
                 let samples = reader
@@ -96,13 +102,21 @@ pub fn recognize_splitted_files(sample_rate: u32) {
                         .collect::<String>();
                     // if recognition result is different from previous result
                     if prev_recognition_result != current_result {
-                        println!("{} s: {:#?}", elapsed_time, current_result);
+                        // println!("{} s: {:#?}", elapsed_time, current_result);
+                        match csv_writer
+                            .write_record(&[elapsed_time.to_string(), current_result.clone()])
+                        {
+                            Ok(_) => {}
+                            Err(err) => {
+                                println!("write to csv error: {:?}", err);
+                            }
+                        }
                         prev_recognition_result = current_result;
                     }
                 }
             }
             Err(err) => {
-                println!("err: {:?}", err);
+                println!("failed to open wav file: {:?}", err);
                 break;
             }
         }
