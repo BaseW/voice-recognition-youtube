@@ -15,12 +15,12 @@ async fn main() {
     let target_video_id = select_target_video_from_search_result(search_query, count).await;
 
     let url = format!("https://www.youtube.com/watch?v={}", target_video_id);
-    let download_file_path = "tmp/video.webm";
+    let download_file_path = format!("tmp/{}.webm", target_video_id);
     // check if download file exists
-    if !std::path::Path::new(download_file_path).exists() {
+    if !std::path::Path::new(&download_file_path).exists() {
         // download video
         println!("downloading video...");
-        let video = download_movie(&url, download_file_path).await.unwrap();
+        let video = download_movie(&url, &download_file_path).await.unwrap();
         // if video is None, exit
         if video.is_none() {
             println!("failed to download video");
@@ -28,7 +28,7 @@ async fn main() {
         }
     }
 
-    let converted_file_path = "tmp/output.wav";
+    let converted_file_path = format!("tmp/{}.wav", target_video_id);
     let sample_rate = 44100;
     // check if converted file exists
     if !std::path::Path::new("tmp/output.wav").exists() {
@@ -37,7 +37,7 @@ async fn main() {
             "converting {} to {}...",
             download_file_path, converted_file_path
         );
-        match convert_file_by_ffmpeg(download_file_path, converted_file_path, sample_rate) {
+        match convert_file_by_ffmpeg(&download_file_path, &converted_file_path, sample_rate) {
             0 => println!("converted successfully"),
             _ => {
                 println!("failed to convert");
@@ -50,7 +50,7 @@ async fn main() {
     if !std::path::Path::new("tmp/output001.wav").exists() {
         // split wav file into 10 seconds
         println!("splitting {}...", converted_file_path);
-        match split_file_by_ffmpeg(converted_file_path, "tmp/output%03d.wav") {
+        match split_file_by_ffmpeg(&converted_file_path, "tmp/output%03d.wav") {
             0 => println!("splitted successfully"),
             _ => {
                 println!("failed to split");
