@@ -31,7 +31,7 @@ async fn main() {
     let converted_file_path = format!("tmp/{}.wav", target_video_id);
     let sample_rate = 44100;
     // check if converted file exists
-    if !std::path::Path::new("tmp/output.wav").exists() {
+    if !std::path::Path::new(&converted_file_path).exists() {
         // convert to wav from webm
         println!(
             "converting {} to {}...",
@@ -47,10 +47,12 @@ async fn main() {
     }
 
     // check if split files exists
-    if !std::path::Path::new("tmp/output001.wav").exists() {
+    let first_file_path = format!("tmp/{}001.wav", target_video_id);
+    if !std::path::Path::new(&first_file_path).exists() {
         // split wav file into 10 seconds
         println!("splitting {}...", converted_file_path);
-        match split_file_by_ffmpeg(&converted_file_path, "tmp/output%03d.wav") {
+        let splitted_file_path = format!("tmp/{}%03d.wav", target_video_id);
+        match split_file_by_ffmpeg(&converted_file_path, &splitted_file_path) {
             0 => println!("splitted successfully"),
             _ => {
                 println!("failed to split");
@@ -61,5 +63,5 @@ async fn main() {
 
     // recognize splitted wav files
     println!("recognizing {}...", converted_file_path);
-    recognize_splitted_files(sample_rate);
+    recognize_splitted_files(&target_video_id, sample_rate);
 }
