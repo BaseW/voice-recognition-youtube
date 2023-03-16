@@ -129,7 +129,22 @@ pub async fn select_target_video_from_search_result(search_query: String, count:
     let videos = search_videos(search_query, count).await;
     // print videos with index
     for (i, video) in videos.iter().enumerate() {
-        println!("{}: {}", i, video.title);
+        // print index, title
+        // if duration exists, print duration
+        // if upload_date exists, print upload_date
+        println!(
+            "{}: {}{}{}",
+            i,
+            video.title,
+            match &video.duration_string {
+                Some(duration_string) => format!(" (再生時間: {})", duration_string),
+                None => "".to_string(),
+            },
+            match &video.upload_date {
+                Some(upload_date) => format!(" (アップロード日: {})", upload_date),
+                None => "".to_string(),
+            }
+        );
     }
     // print prompt to select target video index
     println!("select target video index: ");
