@@ -21,7 +21,7 @@ else
 fi
 
 # download vosk model zip if not exists
-if [ -d $VOSK_MODEL_ZIP ]; then
+if [ -e $VOSK_MODEL_ZIP ]; then
   echo "$VOSK_MODEL_ZIP already exists."
 else
   echo "Downloading $VOSK_MODEL_ZIP..."
