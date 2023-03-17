@@ -7,8 +7,8 @@ VOSK_MAC_DLL_DOWNLOAD_LINK="https://github.com/alphacep/vosk-api/releases/downlo
 VOSK_LINUX_DLL_DOWNLOAD_LINK="https://github.com/alphacep/vosk-api/releases/download/v0.3.42/vosk-linux-x86_64-0.3.42.zip"
 VOSK_MAC_DLL_ZIP="vosk-osx-0.3.42.zip"
 VOSK_LINUX_DLL_ZIP="vosk-linux-x86_64-0.3.42.zip"
-VOSK_MAC_DLL_DIR="vosk-osx-0.3.42"
-VOSK_LINUX_DLL_DIR="vosk-linux-x86_64-0.3.42"
+VOSK_MAC_DLL_PATH="libvosk.dylib"
+VOSK_LINUX_DLL_PATH="libvosk.so"
 
 # check OS
 if [ "$(uname)" == 'Darwin' ]; then
@@ -37,14 +37,14 @@ fi
 
 # download dynamic library zip
 if [ $OS == 'Mac' ]; then
-  if [ -d $VOSK_MAC_DLL_ZIP ]; then
+  if [ -e $VOSK_MAC_DLL_ZIP ]; then
     echo "$VOSK_MAC_DLL_ZIP already exists."
   else
     echo "Downloading $VOSK_MAC_DLL_ZIP..."
     curl -L -o $VOSK_MAC_DLL_ZIP $VOSK_MAC_DLL_DOWNLOAD_LINK
   fi
 elif [ $OS == 'Linux' ]; then
-  if [ -d $VOSK_LINUX_DLL_ZIP ]; then
+  if [ -e $VOSK_LINUX_DLL_ZIP ]; then
     echo "$VOSK_LINUX_DLL_ZIP already exists."
   else
     echo "Downloading $VOSK_LINUX_DLL_ZIP..."
@@ -54,18 +54,28 @@ fi
 
 # unzip dynamic library zip
 if [ $OS == 'Mac' ]; then
-  if [ -d $VOSK_MAC_DLL_DIR ]; then
-    echo "$VOSK_MAC_DLL_DIR already exists."
+  if [ -e $VOSK_MAC_DLL_PATH ]; then
+    echo "$VOSK_MAC_DLL_PATH already exists."
   else
     echo "Unzipping $VOSK_MAC_DLL_ZIP..."
-    unzip $VOSK_MAC_DLL_ZIP
+    # unzip files to current directory
+    unzip $VOSK_MAC_DLL_ZIP -d .
+    # move libvosk.dylib to current directory
+    mv ./vosk-osx-0.3.42/libvosk.dylib .
+    # move vosk.h to current directory
+    mv ./vosk-osx-0.3.42/vosk_api.h .
+    # remove directory
+    rm -rf ./vosk-osx-0.3.42
   fi
 elif [ $OS == 'Linux' ]; then
-  if [ -d $VOSK_LINUX_DLL_DIR ]; then
-    echo "$VOSK_LINUX_DLL_DIR already exists."
+  if [ -e $VOSK_LINUX_DLL_PATH ]; then
+    echo "$VOSK_LINUX_DLL_PATH already exists."
   else
     echo "Unzipping $VOSK_LINUX_DLL_ZIP..."
-    unzip $VOSK_LINUX_DLL_ZIP
+    unzip $VOSK_LINUX_DLL_ZIP -d .
+    mv ./vosk-linux-x86_64-0.3.42/libvosk.so .
+    mv ./vosk-linux-x86_64-0.3.42/vosk_api.h .
+    rm -rf ./vosk-linux-x86_64-0.3.42
   fi
 fi
 
