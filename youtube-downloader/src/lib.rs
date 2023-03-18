@@ -14,7 +14,7 @@ pub async fn download_movie(
     {
         Ok(output) => Ok(output.into_single_video()),
         Err(err) => {
-            println!("err: {:?}", err);
+            println!("download error: {:?}", err);
             Err(err)
         }
     }
@@ -35,7 +35,7 @@ pub async fn search_videos(search_query: String, count: usize) -> Vec<SingleVide
             None => Vec::new(),
         },
         Err(err) => {
-            println!("err: {:?}", err);
+            println!("search error: {:?}", err);
             Vec::new()
         }
     }
@@ -53,7 +53,7 @@ pub async fn download_movie_by_id(id: &str, output_file_name: &str) -> Option<Si
     {
         Ok(output) => output.into_single_video(),
         Err(err) => {
-            println!("err: {:?}", err);
+            println!("download error: {:?}", err);
             None
         }
     }

@@ -42,7 +42,7 @@ fn main() {
             }
         }
         Err(err) => {
-            println!("err: {:?}", err);
+            println!("execute youtube_dl error: {:?}", err);
         }
     }
 }
