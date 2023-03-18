@@ -11,6 +11,9 @@ VOSK_MAC_DLL_PATH="libvosk.dylib"
 VOSK_LINUX_DLL_PATH="libvosk.so"
 VOSK_MAC_BIN_DOWNLOAD_LINK="https://github.com/BaseW/voice-recognition-youtube/releases/download/v0.1.0/recognition-from-link-mac"
 VOSK_LINUX_BIN_DOWNLOAD_LINK="https://github.com/BaseW/voice-recognition-youtube/releases/download/v0.1.0/recognition-from-link-linux"
+YT_DLP_MAC_DOWNLOAD_LINK="https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp_macos"
+YT_DLP_LINUX_DOWNLOAD_LINK="https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp"
+YT_DLP_PATH="/usr/local/bin/yt-dlp"
 
 # check OS
 if [ "$(uname)" == 'Darwin' ]; then
@@ -98,6 +101,19 @@ elif [ $OS == 'Linux' ]; then
     curl -L -o recognition-from-link-linux $VOSK_LINUX_BIN_DOWNLOAD_LINK
     chmod +x recognition-from-link-linux
   fi
+fi
+
+# download yt-dlp
+if [ -e $YT_DLP_PATH ]; then
+  echo "$YT_DLP_PATH already exists."
+else
+  echo "Downloading $YT_DLP_PATH..."
+  if [ $OS == 'Mac' ]; then
+    sudo curl -L -o $YT_DLP_PATH $YT_DLP_MAC_DOWNLOAD_LINK
+  elif [ $OS == 'Linux' ]; then
+    sudo curl -L -o $YT_DLP_PATH $YT_DLP_LINUX_DOWNLOAD_LINK
+  fi
+  sudo chmod +x $YT_DLP_PATH
 fi
 
 # create tmp directory
