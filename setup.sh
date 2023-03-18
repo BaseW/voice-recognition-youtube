@@ -13,7 +13,7 @@ VOSK_MAC_BIN_DOWNLOAD_LINK="https://github.com/BaseW/voice-recognition-youtube/r
 VOSK_LINUX_BIN_DOWNLOAD_LINK="https://github.com/BaseW/voice-recognition-youtube/releases/download/v0.1.0/recognition-from-link-linux"
 YT_DLP_MAC_DOWNLOAD_LINK="https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp_macos"
 YT_DLP_LINUX_DOWNLOAD_LINK="https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp"
-YT_DLP_PATH="yt-dlp"
+YT_DLP_PATH="/usr/local/bin/yt-dlp"
 
 # check OS
 if [ "$(uname)" == 'Darwin' ]; then
