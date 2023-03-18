@@ -23,14 +23,14 @@ fn main() {
     // Set the number of threads to use to 1.
     params.set_n_threads(1);
     // Enable translation.
-    params.set_translate(true);
+    params.set_translate(false);
     // Set the language to translate to to English.
     params.set_language(Some("ja"));
     // Disable anything that prints to stdout.
     params.set_print_special(false);
-    params.set_print_progress(false);
+    params.set_print_progress(true);
     params.set_print_realtime(false);
-    params.set_print_timestamps(false);
+    params.set_print_timestamps(true);
 
     // Open the audio file.
     let mut reader = hound::WavReader::open(wav_path).expect("failed to open file");
