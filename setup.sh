@@ -9,6 +9,8 @@ VOSK_MAC_DLL_ZIP="vosk-osx-0.3.42.zip"
 VOSK_LINUX_DLL_ZIP="vosk-linux-x86_64-0.3.42.zip"
 VOSK_MAC_DLL_PATH="libvosk.dylib"
 VOSK_LINUX_DLL_PATH="libvosk.so"
+VOSK_MAC_BIN_DOWNLOAD_LINK="https://github.com/BaseW/voice-recognition-youtube/releases/download/v0.1.0/recognition-from-link-mac"
+VOSK_LINUX_BIN_DOWNLOAD_LINK="https://github.com/BaseW/voice-recognition-youtube/releases/download/v0.1.0/recognition-from-link-linux"
 
 # check OS
 if [ "$(uname)" == 'Darwin' ]; then
@@ -76,6 +78,25 @@ elif [ $OS == 'Linux' ]; then
     mv ./vosk-linux-x86_64-0.3.42/libvosk.so .
     mv ./vosk-linux-x86_64-0.3.42/vosk_api.h .
     rm -rf ./vosk-linux-x86_64-0.3.42
+  fi
+fi
+
+# download binary
+if [ $OS == 'Mac' ]; then
+  if [ -e recognition-from-link-mac ]; then
+    echo "recognition-from-link-mac already exists."
+  else
+    echo "Downloading recognition-from-link-mac..."
+    curl -L -o recognition-from-link-mac $VOSK_MAC_BIN_DOWNLOAD_LINK
+    chmod +x recognition-from-link-mac
+  fi
+elif [ $OS == 'Linux' ]; then
+  if [ -e recognition-from-link-linux ]; then
+    echo "recognition-from-link-linux already exists."
+  else
+    echo "Downloading recognition-from-link-linux..."
+    curl -L -o recognition-from-link-linux $VOSK_LINUX_BIN_DOWNLOAD_LINK
+    chmod +x recognition-from-link-linux
   fi
 fi
 
