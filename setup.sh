@@ -109,11 +109,11 @@ if [ -e $YT_DLP_PATH ]; then
 else
   echo "Downloading $YT_DLP_PATH..."
   if [ $OS == 'Mac' ]; then
-    curl -L -o $YT_DLP_PATH $YT_DLP_MAC_DOWNLOAD_LINK
+    sudo curl -L -o $YT_DLP_PATH $YT_DLP_MAC_DOWNLOAD_LINK
   elif [ $OS == 'Linux' ]; then
-    curl -L -o $YT_DLP_PATH $YT_DLP_LINUX_DOWNLOAD_LINK
+    sudo curl -L -o $YT_DLP_PATH $YT_DLP_LINUX_DOWNLOAD_LINK
   fi
-  chmod +x $YT_DLP_PATH
+  sudo chmod +x $YT_DLP_PATH
 fi
 
 # create tmp directory
