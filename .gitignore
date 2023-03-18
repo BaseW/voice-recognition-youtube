@@ -4,7 +4,7 @@
 # VOSK
 vosk-model*
 vosk_api.h
-libvosk.dylib
+libvosk.*
 vosk*zip
 
 # env
