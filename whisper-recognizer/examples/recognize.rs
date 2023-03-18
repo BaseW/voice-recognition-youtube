@@ -7,11 +7,12 @@ use whisper_rs::{FullParams, SamplingStrategy, WhisperContext};
 
 /// Loads a context and model, processes an audio file, and prints the resulting transcript to stdout.
 fn main() {
+    // read whisper model path from args
+    let whisper_model_path = std::env::args().nth(1).expect("model path not provided");
     // read wav path from args
-    let wav_path = std::env::args().nth(1).expect("wav path not provided");
+    let wav_path = std::env::args().nth(2).expect("wav path not provided");
     // Load a context and model.
-    let mut ctx =
-        WhisperContext::new("whisper-models/ggml-base.en.bin").expect("failed to load model");
+    let mut ctx = WhisperContext::new(&whisper_model_path).expect("failed to load model");
 
     // Create a params object for running the model.
     // Currently, only the Greedy sampling strategy is implemented, with BeamSearch as a WIP.
@@ -24,7 +25,7 @@ fn main() {
     // Enable translation.
     params.set_translate(true);
     // Set the language to translate to to English.
-    params.set_language(Some("en"));
+    params.set_language(Some("ja"));
     // Disable anything that prints to stdout.
     params.set_print_special(false);
     params.set_print_progress(false);
