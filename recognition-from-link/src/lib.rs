@@ -27,7 +27,7 @@ pub fn convert_file_by_ffmpeg(
             status.code().unwrap()
         }
         Err(err) => {
-            println!("err: {:?}", err);
+            println!("convert process error: {:?}", err);
             1
         }
     }
@@ -54,7 +54,7 @@ pub fn split_file_by_ffmpeg(input_file_path: &str, output_file_path: &str) -> i3
             status.code().unwrap()
         }
         Err(err) => {
-            println!("err: {:?}", err);
+            println!("split process error: {:?}", err);
             1
         }
     }
