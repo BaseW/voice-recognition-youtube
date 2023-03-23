@@ -1,6 +1,6 @@
 use recognition_from_link::{
-    convert_file_by_ffmpeg, recognize_splitted_files, select_target_video_from_search_result,
-    split_file_by_ffmpeg,
+    ffmpeg::convert_file_by_ffmpeg, vosk::split_and_recognize,
+    youtube::select_target_video_from_search_result,
 };
 use youtube_downloader::download_movie;
 
@@ -46,22 +46,5 @@ async fn main() {
         }
     }
 
-    // check if split files exists
-    let first_file_path = format!("tmp/{}001.wav", target_video_id);
-    if !std::path::Path::new(&first_file_path).exists() {
-        // split wav file into 10 seconds
-        println!("splitting {}...", converted_file_path);
-        let splitted_file_path = format!("tmp/{}%03d.wav", target_video_id);
-        match split_file_by_ffmpeg(&converted_file_path, &splitted_file_path) {
-            0 => println!("splitted successfully"),
-            _ => {
-                println!("failed to split");
-                std::process::exit(1);
-            }
-        }
-    }
-
-    // recognize splitted wav files
-    println!("recognizing {}...", converted_file_path);
-    recognize_splitted_files(&target_video_id, sample_rate);
+    split_and_recognize(&target_video_id, sample_rate);
 }
