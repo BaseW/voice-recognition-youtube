@@ -7,6 +7,10 @@ vosk_api.h
 libvosk.*
 vosk*zip
 
+# Whisper
+transcript.txt
+whisper-models/*
+
 # env
 .envrc
 

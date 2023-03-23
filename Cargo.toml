@@ -4,4 +4,5 @@ members = [
     "voice-recognition-vosk",
     "youtube-downloader",
     "recognition-from-link",
+    "whisper-recognizer",
 ]
