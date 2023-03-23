@@ -1,9 +1,7 @@
 // This example is not going to build in this folder.
 // You need to copy this code into your project and add the whisper_rs dependency in your cargo.toml
 
-use std::fs::File;
-use std::io::Write;
-use whisper_rs::{FullParams, SamplingStrategy, WhisperContext};
+use whisper_recognizer::WhisperRecognizer;
 
 /// Loads a context and model, processes an audio file, and prints the resulting transcript to stdout.
 fn main() {
@@ -11,33 +9,13 @@ fn main() {
     let whisper_model_path = std::env::args().nth(1).expect("model path not provided");
     // read wav path from args
     let wav_path = std::env::args().nth(2).expect("wav path not provided");
-    // Load a context and model.
-    let mut ctx = WhisperContext::new(&whisper_model_path).expect("failed to load model");
-
-    // Create a params object for running the model.
-    // Currently, only the Greedy sampling strategy is implemented, with BeamSearch as a WIP.
-    // The number of past samples to consider defaults to 0.
-    let mut params = FullParams::new(SamplingStrategy::Greedy { best_of: 0 });
-
-    // Edit params as needed.
-    // Set the number of threads to use to 1.
-    params.set_n_threads(1);
-    // Enable translation.
-    params.set_translate(false);
-    // Set the language to translate to to English.
-    params.set_language(Some("ja"));
-    // Disable anything that prints to stdout.
-    params.set_print_special(false);
-    params.set_print_progress(true);
-    params.set_print_realtime(false);
-    params.set_print_timestamps(true);
+    let mut recognizer = WhisperRecognizer::new(whisper_model_path);
 
     // Open the audio file.
     let mut reader = hound::WavReader::open(wav_path).expect("failed to open file");
     let hound::WavSpec {
         channels,
         sample_rate,
-        bits_per_sample,
         ..
     } = reader.spec();
 
@@ -62,28 +40,14 @@ fn main() {
         panic!("sample rate must be 16KHz");
     }
 
-    // Run the model.
-    ctx.full(params, &audio[..]).expect("failed to run model");
-
-    // Create a file to write the transcript to.
-    let mut file = File::create("transcript.txt").expect("failed to create file");
+    // start recognition
+    recognizer.start_recognition(&audio[..]);
 
     // Iterate through the segments of the transcript.
-    let num_segments = ctx.full_n_segments();
+    let num_segments = recognizer.get_segment_count();
     for i in 0..num_segments {
-        // Get the transcribed text and timestamps for the current segment.
-        let segment = ctx.full_get_segment_text(i).expect("failed to get segment");
-        let start_timestamp = ctx.full_get_segment_t0(i);
-        let end_timestamp = ctx.full_get_segment_t1(i);
+        let get_segment_result = recognizer.get_segment_result(i);
 
-        // Print the segment to stdout.
-        println!("[{} - {}]: {}", start_timestamp, end_timestamp, segment);
-
-        // Format the segment information as a string.
-        let line = format!("[{} - {}]: {}\n", start_timestamp, end_timestamp, segment);
-
-        // Write the segment information to the file.
-        file.write_all(line.as_bytes())
-            .expect("failed to write to file");
+        println!("{}", get_segment_result);
     }
 }
