@@ -1,6 +1,6 @@
 use recognition_from_link::{
-    ffmpeg::convert_file_by_ffmpeg, vosk::split_and_recognize, whisper::recognize,
-    youtube::select_target_video_from_search_result,
+    ffmpeg::convert_file_by_ffmpeg, vosk::recognize as recognize_by_vosk,
+    whisper::recognize as recognize_by_whisper, youtube::select_target_video_from_search_result,
 };
 use youtube_downloader::download_movie;
 
@@ -53,9 +53,16 @@ async fn main() {
         }
     }
 
+    println!("start recognition...");
+    let started_at = std::time::Instant::now();
+
     if mode == "vosk" {
-        split_and_recognize(&target_video_id, sample_rate);
+        recognize_by_vosk(&target_video_id, sample_rate);
     } else if mode == "whisper" {
-        recognize(&target_video_id);
+        recognize_by_whisper(&target_video_id);
     }
+
+    println!("done");
+    let elapsed = started_at.elapsed().as_secs();
+    println!("elapsed time: {} s", elapsed);
 }
