@@ -91,3 +91,66 @@ pub fn split_and_recognize(target_video_id: &str, sample_rate: u32) {
 
     recognize_splitted_files(target_video_id, sample_rate);
 }
+
+pub fn recognize(target_video_id: &str, sample_rate: u32) {
+    let converted_file_path = format!("tmp/{}.wav", target_video_id);
+    // check if converted file exists
+    if !std::path::Path::new(&converted_file_path).exists() {
+        println!("{} does not exist", converted_file_path);
+        std::process::exit(1);
+    }
+
+    // read path to vosk model from environment variable
+    let vosk_model_path = std::env::var("VOSK_MODEL_PATH").expect("VOSK_MODEL_PATH not set");
+    let mut vosk_recognizer =
+        voice_recognition_vosk::VoskRecognizer::new(vosk_model_path, sample_rate);
+    let mut csv_writer = csv::Writer::from_path(format!("tmp/{}.csv", target_video_id)).unwrap();
+    // write header: elapsed_time, recognition_result
+    csv_writer
+        .write_record(&["elapsed_time", "recognition_result"])
+        .expect("Could not write header");
+
+    let mut prev_recognition_result = "".to_string();
+    let mut chunk_count = 0;
+    let chunk_size = 100;
+    match WavReader::open(converted_file_path) {
+        Ok(mut reader) => {
+            let samples = reader
+                .samples()
+                .collect::<hound::Result<Vec<i16>>>()
+                .expect("Could not read WAV file");
+            for sample in samples.chunks(chunk_size) {
+                chunk_count = chunk_count + 1;
+                let elapsed_time = ((chunk_size * chunk_count) as f32) / (sample_rate as f32);
+                vosk_recognizer.accept_waveform(sample);
+                let current_result = vosk_recognizer.partial_result();
+                // get last 30 characters
+                let current_result = current_result
+                    .chars()
+                    .rev()
+                    .take(30)
+                    .collect::<String>()
+                    .chars()
+                    .rev()
+                    .collect::<String>();
+                // if recognition result is different from previous result
+                if prev_recognition_result != current_result {
+                    // println!("{} s: {:#?}", elapsed_time, current_result);
+                    match csv_writer
+                        .write_record(&[elapsed_time.to_string(), current_result.clone()])
+                    {
+                        Ok(_) => {}
+                        Err(err) => {
+                            println!("write to csv error: {:?}", err);
+                        }
+                    }
+                    prev_recognition_result = current_result;
+                }
+            }
+        }
+        Err(err) => {
+            println!("failed to open wav file: {:?}", err);
+            std::process::exit(1);
+        }
+    };
+}
