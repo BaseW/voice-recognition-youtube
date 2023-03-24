@@ -10,4 +10,5 @@ csv = "1.2.1"
 hound = "3.5.0"
 tokio = { version = "1.26.0", features = ["full"] }
 voice-recognition-vosk = { version = "0.1.0", path = "../voice-recognition-vosk" }
+whisper-recognizer = { version = "0.1.0", path = "../whisper-recognizer" }
 youtube-downloader = { version = "0.1.0", path = "../youtube-downloader" }

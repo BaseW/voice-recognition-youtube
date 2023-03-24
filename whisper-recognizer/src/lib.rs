@@ -1,4 +1,8 @@
-use whisper_rs::{FullParams, SamplingStrategy, WhisperContext};
+use whisper_rs::{convert_integer_to_float_audio, FullParams, SamplingStrategy, WhisperContext};
+
+pub fn convert_integer_to_float_audio_data(audio: &[i16]) -> Vec<f32> {
+    convert_integer_to_float_audio(audio)
+}
 
 pub struct WhisperRecognizer {
     whisper_context: WhisperContext,
@@ -40,13 +44,13 @@ impl WhisperRecognizer {
         self.whisper_context.full_n_segments()
     }
 
-    pub fn get_segment_result(&self, index: i32) -> String {
+    pub fn get_segment_result(&self, index: i32) -> (i64, i64, String) {
         let segment = self
             .whisper_context
             .full_get_segment_text(index)
             .expect("failed to get segment");
         let start_timestamp = self.whisper_context.full_get_segment_t0(index);
         let end_timestamp = self.whisper_context.full_get_segment_t1(index);
-        format!("{}, {}, {}", start_timestamp, end_timestamp, segment)
+        (start_timestamp, end_timestamp, segment)
     }
 }
