@@ -1,5 +1,5 @@
 use recognition_from_link::{
-    ffmpeg::convert_file_by_ffmpeg, vosk::split_and_recognize,
+    ffmpeg::convert_file_by_ffmpeg, vosk::split_and_recognize, whisper::recognize,
     youtube::select_target_video_from_search_result,
 };
 use youtube_downloader::download_movie;
@@ -10,6 +10,13 @@ async fn main() {
     let search_query = std::env::args().nth(1).expect("search query not provided");
     let count = std::env::args().nth(2).expect("count not provided");
     let count = count.parse::<usize>().unwrap();
+    // select mode from args: vosk or whisper
+    let mode = std::env::args().nth(3).expect("mode not provided");
+    // validate mode
+    if mode != "vosk" && mode != "whisper" {
+        println!("mode must be vosk or whisper");
+        std::process::exit(1);
+    }
 
     // select target video from search result
     let target_video_id = select_target_video_from_search_result(search_query, count).await;
@@ -46,5 +53,9 @@ async fn main() {
         }
     }
 
-    split_and_recognize(&target_video_id, sample_rate);
+    if mode == "vosk" {
+        split_and_recognize(&target_video_id, sample_rate);
+    } else if mode == "whisper" {
+        recognize(&target_video_id);
+    }
 }

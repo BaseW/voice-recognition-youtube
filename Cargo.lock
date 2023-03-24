@@ -665,6 +665,7 @@ dependencies = [
  "hound",
  "tokio",
  "voice-recognition-vosk",
+ "whisper-recognizer",
  "youtube-downloader",
 ]
 

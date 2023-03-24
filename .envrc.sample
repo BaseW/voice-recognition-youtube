@@ -1,1 +1,2 @@
 export VOSK_MODEL_PATH=./vosk-model-small-en-us-0.15
+export WHISPER_MODEL_PATH=./whisper-models/ggml-small.bin

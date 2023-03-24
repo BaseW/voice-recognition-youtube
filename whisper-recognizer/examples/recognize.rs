@@ -48,6 +48,9 @@ fn main() {
     for i in 0..num_segments {
         let get_segment_result = recognizer.get_segment_result(i);
 
-        println!("{}", get_segment_result);
+        println!(
+            "{}, {}, {}",
+            get_segment_result.0, get_segment_result.1, get_segment_result.2
+        );
     }
 }
