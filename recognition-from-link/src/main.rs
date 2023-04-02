@@ -1,8 +1,20 @@
 use recognition_from_link::{
-    ffmpeg::convert_file_by_ffmpeg, vosk::split_and_recognize, whisper::recognize,
-    youtube::select_target_video_from_search_result,
+    all, download, ffmpeg::convert_file_by_ffmpeg, recognize, search, vosk::split_and_recognize,
+    whisper::recognize, youtube::select_target_video_from_search_result,
 };
 use youtube_downloader::download_movie;
+
+#[derive(clap::Subcommand, Debug)]
+enum Command {
+    /// search videos only
+    Search(search::Args),
+    /// download video only
+    Download(download::Args),
+    /// recognize video only
+    Recognize(recognize::Args),
+    /// search, download, recognize
+    All(all::Args),
+}
 
 #[tokio::main]
 async fn main() {
