@@ -16,8 +16,40 @@ enum Command {
     All(all::Args),
 }
 
+fn parse_level(s: &str) -> anyhow::Result<log::LevelFilter> {
+    s.parse::<log::LevelFilter>()
+        .map_err(|_| anyhow::anyhow!("failed to parse level '{s}'"))
+}
+
+#[derive(Debug, clap::Parser)]
+#[clap(author, version, about, long_about = None)]
+struct Opts {
+    /// The log level for messages, only log messages at or above
+    /// the level will be emitted.
+    #[clap(
+        short = 'L',
+        default_value = "warn",
+        value_parser = parse_level,
+        long_help = "The log level for messages, only log messages at or above the level will be emitted.
+Possible values:
+* off
+* error
+* warn
+* info
+* debug
+* trace"
+    )]
+    log_level: log::LevelFilter,
+    #[clap(subcommand)]
+    cmd: Command,
+}
+
 #[tokio::main]
 async fn main() {
+    use clap::Parser;
+
+    let args = Opts::parse();
+    println!("{:?}", args);
     // search videos by query that was provided from args
     let search_query = std::env::args().nth(1).expect("search query not provided");
     let count = std::env::args().nth(2).expect("count not provided");
