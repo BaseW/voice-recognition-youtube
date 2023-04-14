@@ -1,4 +1,4 @@
-use youtube_downloader::search_videos;
+pub use youtube_downloader::search_videos;
 
 pub async fn select_target_video_from_search_result(search_query: String, count: usize) -> String {
     println!("searching videos...");
