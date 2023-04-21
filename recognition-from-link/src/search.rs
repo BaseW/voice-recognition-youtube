@@ -14,8 +14,9 @@ pub async fn search(query: String, limit: Option<usize>) -> Vec<SingleVideo> {
         // if duration exists, print duration
         // if upload_date exists, print upload_date
         println!(
-            "{}: {}{}{}",
+            "{}: {}{}{}{}",
             i,
+            video.id,
             video.title,
             match &video.duration_string {
                 Some(duration_string) => format!(" (再生時間: {})", duration_string),
