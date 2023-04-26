@@ -1,4 +1,5 @@
-use youtube_dl::{Error, SearchOptions, SingleVideo, YoutubeDl};
+pub use youtube_dl::SingleVideo;
+use youtube_dl::{Error, SearchOptions, YoutubeDl};
 
 pub async fn download_movie(
     url: &str,
